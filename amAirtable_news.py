@@ -19,7 +19,6 @@ import ast #to covert string to list
 # Airtable settings 
 base_key = os.environ.get("PRIVATE_BASE_KEY")
 table_producer = os.environ.get("PRIVATE_TABLE_NAME_PRODUCER")
-table_source = os.environ.get("PRIVATE_TABLE_NAME")
 api_key_airtable = os.environ.get("PRIVATE_API_KEY_AIRTABLE")
 airtable_producer = Airtable(base_key, table_producer, api_key_airtable)
 
