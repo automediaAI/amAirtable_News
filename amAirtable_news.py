@@ -36,17 +36,47 @@ def uploadData(inputDictList, recToUpdate):
 
 # Gives back correct news data based on ask ie how many, and what format
 def cleanNewsData(inputNews, inputDataFormat, count_asked):
-	outputList = []
+	data_asked = inputDataFormat["data_needed"]
+	# print ('Data asked',data_asked)
+	
 	range_to_check = count_asked if (count_asked <= len(inputNews)) else len(inputNews)
-	for rec in range(range_to_check): 
-		outputDict = {}
-		outputDict['recID'] = rec+1 #to give it a sequence
-		dataIn = inputNews[rec] #already a dict
-		for key, value in inputDataFormat.items():
-			if value in dataIn: 
-				outputDict[key] = dataIn[value] 
-		outputList.append(outputDict)
-	return outputList
+
+	if range_to_check == 1: #In case only 1 item asked for or available 
+		tempDict = {} #since this will return a single dict
+		recIDneeded = inputDataFormat["recIDneeded"]
+		if recIDneeded > len(inputNews):
+			return {"error":"🚫 Record asked not in dict"}
+		else:
+			for i in inputNews:
+				if (str(i['recID_article']) == str(recIDneeded)): #Only returning that recID
+					for key, value in data_asked.items(): #To map it
+						if value in i.keys(): 
+							tempDict[key] = i[value]
+			return tempDict
+	
+	elif range_to_check > 1:
+		outputDict = {
+				"table_info": {
+					"type":"newsSingleTable",
+				},
+				"rows" : []
+			}
+		outputList = []		
+
+		for rec in range(range_to_check): 
+			tempDict = {}
+			tempDict['recID'] = rec #to give it a sequence
+			dataIn = inputNews[rec] #already a dict
+			
+			for key, value in data_asked.items():
+				if value in dataIn: 
+					tempDict[key] = dataIn[value] 
+			outputList.append(tempDict)
+		outputDict["rows"] = outputList
+		return outputDict
+	
+	else:
+		return "🚫Data input incorrect"
 
 #Goes through all records and updates ones that are in the master dict
 def updateLoop():
@@ -59,13 +89,16 @@ def updateLoop():
 				payload_native = i["fields"]["payload"]
 				payload_json = json.loads(payload_native)
 				count_asked = payload_json["count_needed"] #How many records needed 
-				data_asked = payload_json["data_needed"]
+				# data_asked = payload_json["data_needed"]
+				data_asked = payload_json #Giving it entire JSON like in amDatacovid
 				news_output = i["fields"]["output - amPayload_News"][0] #Since airtable stores as a list
 				news_output_json = ast.literal_eval(news_output) #since List from airtable is in String
 				data_toUpload = cleanNewsData(news_output_json, data_asked, count_asked)
 				uploadData(data_toUpload, rec_ofAsked) #Just that bit updated 
+				print ("Row upload to CMS done..")
 		except Exception: 
 			pass
 	print ("Upload to CMS done")
 
 updateLoop()
+
