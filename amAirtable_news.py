@@ -41,7 +41,7 @@ def cleanNewsData(inputNews, inputDataFormat, count_asked):
 	
 	range_to_check = count_asked if (count_asked <= len(inputNews)) else len(inputNews)
 
-	if range_to_check == 1: #In case only 1 item asked for or available 
+	if count_asked == 1: #In case only 1 item asked for or available 
 		tempDict = {} #since this will return a single dict
 		recIDneeded = inputDataFormat["recIDneeded"]
 		if recIDneeded > len(inputNews):
@@ -54,7 +54,7 @@ def cleanNewsData(inputNews, inputDataFormat, count_asked):
 							tempDict[key] = i[value]
 			return tempDict
 	
-	elif range_to_check > 1:
+	elif count_asked > 1: #In case of newsTable
 		outputDict = {
 				"table_info": {
 					"type":"newsSingleTable",
