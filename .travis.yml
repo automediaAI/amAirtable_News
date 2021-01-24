@@ -17,4 +17,4 @@ install:
   # - master
 
 # command to run tests
-script: python3 amAirtable_news.py
+script: python3 task.py
