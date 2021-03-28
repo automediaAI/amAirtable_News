@@ -47,7 +47,8 @@ def getNewsData(inputNews, inputDataFormat):
 			return {"error":"🚫 Record asked not in dict"}
 		else:
 			for i in inputNews:
-				if (str(i['recID']) == str(recID_asked)): #Only returning that recID
+				if (str(index(i)) == str(recID_asked)): #Only returning that recID
+				# if (str(i['recID']) == str(recID_asked)): #Only returning that recID
 					for key, value in data_asked.items(): #To map it
 						if value in i.keys(): 
 							tempDict[key] = i[value]
